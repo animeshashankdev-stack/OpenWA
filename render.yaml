@@ -2,7 +2,7 @@ services:
   - type: web
     name: openwa
     runtime: docker
-    plan: starter
+    plan: standard
     region: singapore
     autoDeploy: true
     numInstances: 1

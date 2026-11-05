@@ -311,8 +311,9 @@ flowchart TB
 ### Render with Supabase
 
 `render.yaml` defines one Docker web service in Singapore, with the readiness probe and a persistent
-`/app/data` disk. Deploy it on an always-on paid instance; Render's free web services sleep and do not
-support persistent disks. Keep the instance count at one: WhatsApp engine state is process-local, and
+`/app/data` disk. Use Render's Standard plan for whatsapp-web.js: its Chromium browser runs alongside
+the API and needs more memory than the Starter plan provides. Render's free web services sleep and do
+not support persistent disks. Keep the instance count at one: WhatsApp engine state is process-local, and
 the main auth/audit database and linked-session files are stored on the disk.
 
 Before the first deploy, set `DATABASE_PASSWORD` to the Supabase database password and `API_MASTER_KEY`
