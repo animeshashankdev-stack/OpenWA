@@ -73,7 +73,30 @@
 }
 
 .zxkai-logo-fallback {
-  color: #f87171;
+  position: absolute;
+  inset: 12%;
+  border: 1px solid #f87171;
+  border-radius: 50%;
+}
+
+.zxkai-logo-fallback::before,
+.zxkai-logo-fallback::after {
+  position: absolute;
+  content: '';
+  background: #f87171;
+}
+
+.zxkai-logo-fallback::before {
+  inset: 15% 44%;
+  transform: rotate(35deg);
+}
+
+.zxkai-logo-fallback::after {
+  top: 48%;
+  left: 18%;
+  width: 64%;
+  height: 1px;
+  transform: rotate(-28deg);
 }
 
 .sidebar-brand {
