@@ -30,63 +30,70 @@ describe('pickSettledWebVersion', () => {
   const now = FIXED_NOW;
   const settled = (extra = 0) => WEB_VERSION_SETTLE_MS + extra;
 
-  it('falls back to currentVersion when versions is missing or not an array', () => {
-    expect(pickSettledWebVersion(undefined, now, '2.3000.1-alpha')).toBe('2.3000.1-alpha');
-    expect(pickSettledWebVersion(null, now, '2.3000.1-alpha')).toBe('2.3000.1-alpha');
-    expect(pickSettledWebVersion('nope', now, '2.3000.1-alpha')).toBe('2.3000.1-alpha');
+  it('falls back to a stable currentVersion when versions is missing or not an array', () => {
+    expect(pickSettledWebVersion(undefined, now, '2.3000.1')).toBe('2.3000.1');
+    expect(pickSettledWebVersion(null, now, '2.3000.1')).toBe('2.3000.1');
+    expect(pickSettledWebVersion('nope', now, '2.3000.1')).toBe('2.3000.1');
+    expect(pickSettledWebVersion(undefined, now, '2.3000.1-alpha')).toBeNull();
   });
 
-  it('falls back to currentVersion (or null) when no build qualifies', () => {
-    expect(pickSettledWebVersion([], now, '2.3000.1-alpha')).toBe('2.3000.1-alpha');
+  it('falls back to a stable currentVersion (or null) when no build qualifies', () => {
+    expect(pickSettledWebVersion([], now, '2.3000.1')).toBe('2.3000.1');
+    expect(pickSettledWebVersion([], now, '2.3000.1-alpha')).toBeNull();
     expect(pickSettledWebVersion([], now, null)).toBeNull();
   });
 
   it('prefers a settled build over a too-fresh currentVersion', () => {
     // currentVersion is 40 minutes old (the #684 scenario); one build is 2 days old.
     const versions = [
-      entry('2.3000.1043012667-alpha', 40 * 60 * 1000, 60 * 86_400_000), // fresh — skip
-      entry('2.3000.OLD-BUILD-alpha', 2 * 86_400_000, 50 * 86_400_000), // settled — pick
+      entry('2.3000.1043012667-alpha', 40 * 60 * 1000, 60 * 86_400_000), // prerelease — skip
+      entry('2.3000.OLD-BUILD', 2 * 86_400_000, 50 * 86_400_000), // settled — pick
     ];
-    expect(pickSettledWebVersion(versions, now, '2.3000.1043012667-alpha')).toBe('2.3000.OLD-BUILD-alpha');
+    expect(pickSettledWebVersion(versions, now, '2.3000.1043012667-alpha')).toBe('2.3000.OLD-BUILD');
   });
 
-  it('skips builds newer than the settle window even if currentVersion is fresh', () => {
+  it('returns null when the registry only offers a too-fresh prerelease', () => {
     const versions = [entry('2.3000.FRESH-alpha', 60 * 60 * 1000, 60 * 86_400_000)]; // 1h old
-    expect(pickSettledWebVersion(versions, now, '2.3000.FALLBACK-alpha')).toBe('2.3000.FALLBACK-alpha'); // none settled → fallback
+    expect(pickSettledWebVersion(versions, now, '2.3000.FALLBACK-alpha')).toBeNull();
   });
 
   it('picks the NEWEST qualifying (settled) build', () => {
     const versions = [
-      entry('2.3000.OLD-alpha', 10 * 86_400_000, 50 * 86_400_000),
-      entry('2.3000.NEW-alpha', settled() + 60_000, 50 * 86_400_000), // just past settle, newest qualifying
-      entry('2.3000.MID-alpha', 5 * 86_400_000, 50 * 86_400_000),
+      entry('2.3000.OLD', 10 * 86_400_000, 50 * 86_400_000),
+      entry('2.3000.NEW', settled() + 60_000, 50 * 86_400_000), // just past settle, newest qualifying
+      entry('2.3000.MID', 5 * 86_400_000, 50 * 86_400_000),
     ];
-    expect(pickSettledWebVersion(versions, now, '2.3000.FALLBACK-alpha')).toBe('2.3000.NEW-alpha');
+    expect(pickSettledWebVersion(versions, now, '2.3000.FALLBACK')).toBe('2.3000.NEW');
   });
 
   it('skips beta builds', () => {
     const versions = [
       entry('2.3000.BETA-alpha', settled(), 50 * 86_400_000, true), // beta=true → skip
-      entry('2.3000.STABLE-alpha', settled() + 1000, 50 * 86_400_000, false),
+      entry('2.3000.STABLE', settled() + 1000, 50 * 86_400_000, false),
     ];
-    expect(pickSettledWebVersion(versions, now, '2.3000.BETA-alpha')).toBe('2.3000.STABLE-alpha');
+    expect(pickSettledWebVersion(versions, now, '2.3000.BETA-alpha')).toBe('2.3000.STABLE');
+  });
+
+  it('skips alpha prereleases even when beta is false', () => {
+    const versions = [entry('2.3000.ROLLING-alpha', settled(), 50 * 86_400_000, false)];
+    expect(pickSettledWebVersion(versions, now, '2.3000.ROLLING-alpha')).toBeNull();
   });
 
   it('skips already-expired builds', () => {
     const versions = [
       entry('2.3000.EXPIRED-alpha', settled(), -1000, false), // expire in the past
-      entry('2.3000.LIVE-alpha', settled() + 1000, 50 * 86_400_000, false),
+      entry('2.3000.LIVE', settled() + 1000, 50 * 86_400_000, false),
     ];
-    expect(pickSettledWebVersion(versions, now, '2.3000.EXPIRED-alpha')).toBe('2.3000.LIVE-alpha');
+    expect(pickSettledWebVersion(versions, now, '2.3000.EXPIRED-alpha')).toBe('2.3000.LIVE');
   });
 
   it('skips malformed entries (non-string version / unparseable released)', () => {
     const versions = [
       { version: 123, beta: false, released: new Date(now - settled()).toISOString() }, // non-string version
       { version: '2.3000.OK-alpha', beta: false, released: 'not-a-date' }, // bad released
-      entry('2.3000.GOOD-alpha', settled() + 1000, 50 * 86_400_000, false),
+      entry('2.3000.GOOD', settled() + 1000, 50 * 86_400_000, false),
     ];
-    expect(pickSettledWebVersion(versions, now, null)).toBe('2.3000.GOOD-alpha');
+    expect(pickSettledWebVersion(versions, now, null)).toBe('2.3000.GOOD');
   });
 });
 
@@ -114,7 +121,7 @@ describe('resolveCurrentWebVersion', () => {
               expire: '2099-01-01T00:00:00Z',
             },
             {
-              version: '2.3000.SETTLED-alpha',
+              version: '2.3000.SETTLED',
               beta: false,
               released: new Date(Date.now() - 2 * 86_400_000).toISOString(),
               expire: '2099-01-01T00:00:00Z',
@@ -123,12 +130,12 @@ describe('resolveCurrentWebVersion', () => {
         }),
       ),
     );
-    await expect(resolveCurrentWebVersion(fetcher as never)).resolves.toBe('2.3000.SETTLED-alpha');
+    await expect(resolveCurrentWebVersion(fetcher as never)).resolves.toBe('2.3000.SETTLED');
   });
 
-  it('falls back to currentVersion when the registry carries no versions[]', async () => {
+  it('does not pin an alpha currentVersion when the registry carries no stable versions[]', async () => {
     const fetcher = jest.fn(() => Promise.resolve(json({ currentBeta: null, currentVersion: '2.3000.SOLO-alpha' })));
-    await expect(resolveCurrentWebVersion(fetcher as never)).resolves.toBe('2.3000.SOLO-alpha');
+    await expect(resolveCurrentWebVersion(fetcher as never)).resolves.toBeNull();
   });
 
   // The registry deletes a build's HTML about 60 days after release. A pin cached for the life of the
@@ -145,29 +152,29 @@ describe('resolveCurrentWebVersion', () => {
     it('re-reads the registry once the pin is a day old', async () => {
       const fetcher = jest
         .fn()
-        .mockResolvedValueOnce(json({ currentVersion: '2.3000.OLD-alpha' }))
-        .mockResolvedValueOnce(json({ currentVersion: '2.3000.NEW-alpha' }));
+        .mockResolvedValueOnce(json({ currentVersion: '2.3000.OLD' }))
+        .mockResolvedValueOnce(json({ currentVersion: '2.3000.NEW' }));
 
-      await expect(resolveCurrentWebVersion(fetcher as never)).resolves.toBe('2.3000.OLD-alpha');
+      await expect(resolveCurrentWebVersion(fetcher as never)).resolves.toBe('2.3000.OLD');
       now += DAY - 1;
-      await expect(resolveCurrentWebVersion(fetcher as never)).resolves.toBe('2.3000.OLD-alpha');
+      await expect(resolveCurrentWebVersion(fetcher as never)).resolves.toBe('2.3000.OLD');
       expect(fetcher).toHaveBeenCalledTimes(1);
       now += 1;
-      await expect(resolveCurrentWebVersion(fetcher as never)).resolves.toBe('2.3000.NEW-alpha');
+      await expect(resolveCurrentWebVersion(fetcher as never)).resolves.toBe('2.3000.NEW');
       expect(fetcher).toHaveBeenCalledTimes(2);
     });
 
     it('keeps the previous pin when a refresh fails, rather than dropping it', async () => {
       const fetcher = jest
         .fn()
-        .mockResolvedValueOnce(json({ currentVersion: '2.3000.OLD-alpha' }))
+        .mockResolvedValueOnce(json({ currentVersion: '2.3000.OLD' }))
         .mockRejectedValue(new Error('boom'));
 
       await resolveCurrentWebVersion(fetcher as never);
       now += DAY;
-      await expect(resolveCurrentWebVersion(fetcher as never)).resolves.toBe('2.3000.OLD-alpha');
+      await expect(resolveCurrentWebVersion(fetcher as never)).resolves.toBe('2.3000.OLD');
       // Inside the failure backoff too: no second fetch, and still the previous pin.
-      await expect(resolveCurrentWebVersion(fetcher as never)).resolves.toBe('2.3000.OLD-alpha');
+      await expect(resolveCurrentWebVersion(fetcher as never)).resolves.toBe('2.3000.OLD');
       expect(fetcher).toHaveBeenCalledTimes(2);
     });
   });
@@ -208,14 +215,28 @@ describe('resolveWebVersionPin remote-trust warning', () => {
     expect(mockWarn).not.toHaveBeenCalled();
   });
 
-  it('warns for the auto-resolved registry pin (the default posture)', async () => {
+  it('warns for an auto-resolved stable registry pin', async () => {
     delete process.env.WWEBJS_WEB_VERSION;
-    const fetcher = jest.fn(() => Promise.resolve(json({ currentVersion: '2.3000.SOLO-alpha' })));
+    const fetcher = jest.fn(() => Promise.resolve(json({ currentVersion: '2.3000.SOLO' })));
     await resolveWebVersionPin(fetcher as never);
     expect(mockWarn).toHaveBeenCalledTimes(1);
     expect(mockWarn).toHaveBeenCalledWith(
       expect.stringContaining('WITHOUT an integrity check'),
-      expect.objectContaining({ webVersion: '2.3000.SOLO-alpha' }),
+      expect.objectContaining({ webVersion: '2.3000.SOLO' }),
+    );
+  });
+
+  it('uses the first-party build when auto-resolve finds only an alpha prerelease', async () => {
+    delete process.env.WWEBJS_WEB_VERSION;
+    const fetcher = jest.fn(() => Promise.resolve(json({ currentVersion: '2.3000.SOLO-alpha' })));
+    await expect(resolveWebVersionPin(fetcher as never)).resolves.toBeUndefined();
+    expect(mockWarn).toHaveBeenCalledWith(
+      expect.stringContaining('continuing WITHOUT a pin'),
+      expect.objectContaining({ action: 'web_version_resolve_failed', reason: 'the registry carried no usable build' }),
+    );
+    expect(mockWarn).not.toHaveBeenCalledWith(
+      expect.stringContaining('WITHOUT an integrity check'),
+      expect.anything(),
     );
   });
 });
@@ -259,8 +280,8 @@ describe('resolveCurrentWebVersion failure warning', () => {
   });
 
   it('stays silent on a successful resolve', async () => {
-    const fetcher = jest.fn(() => Promise.resolve(json({ currentVersion: '2.3000.SOLO-alpha' })));
-    await expect(resolveCurrentWebVersion(fetcher as never)).resolves.toBe('2.3000.SOLO-alpha');
+    const fetcher = jest.fn(() => Promise.resolve(json({ currentVersion: '2.3000.SOLO' })));
+    await expect(resolveCurrentWebVersion(fetcher as never)).resolves.toBe('2.3000.SOLO');
     expect(mockWarn).not.toHaveBeenCalled();
   });
 

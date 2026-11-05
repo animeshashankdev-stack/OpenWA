@@ -355,9 +355,12 @@ Restart the container after changing it. Pick the build from
 build the registry no longer serves cannot be fetched, and the session starts on the live build rather
 than the pin you asked for, with a warning at start (action `web_version_html_unavailable`, naming the
 build, the URL and the reason). With
-`WWEBJS_WEB_VERSION` unset, `latest`, or `auto` (the default), OpenWA auto-resolves a settled build
-from that registry and pins its HTML — note this HTML is fetched from a third-party repository and
-executed inside the `web.whatsapp.com` origin without an integrity check. Set
+`WWEBJS_WEB_VERSION` unset, `latest`, or `auto` (the default), OpenWA auto-resolves a settled stable
+build from that registry and pins its HTML — note this HTML is fetched from a third-party repository and
+executed inside the `web.whatsapp.com` origin without an integrity check. Prerelease versions such as
+`-alpha` are never selected automatically, even if the registry's `beta` flag is false. If the registry
+only offers prereleases, OpenWA uses WhatsApp's first-party build instead. This also avoids the
+`Client.inject` `Socket` null failure seen with some alpha builds. Set
 `WWEBJS_WEB_VERSION=off` to disable pinning and use the first-party build served by WhatsApp. An
 unpinned session (this setting, or an auto-resolve that could not reach the registry) caches nothing to
 disk, so it also works on the image's read-only root filesystem. A pinned build's HTML is downloaded

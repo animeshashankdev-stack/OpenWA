@@ -137,29 +137,31 @@ function buildRemotePin(version: string): RemoteWebVersionPin {
 
 type WaVersionEntry = { version?: unknown; beta?: unknown; released?: unknown; expire?: unknown };
 
+const isPrereleaseWebVersion = (version: string): boolean => /-(?:alpha|beta|rc)(?:[.-]|$)/i.test(version);
+
 /**
- * Pick the WhatsApp Web build to auto-pin from the registry's `versions[]`: the newest non-beta,
- * unexpired build published at least `WEB_VERSION_SETTLE_MS` ago — i.e. one the ecosystem has had
- * time to validate — rather than the registry's `currentVersion`, which can be minutes old. Falls
- * back to `currentVersion` when no build qualifies (a freshly-reset registry, or every build still
- * too new), so this hardens pinning without ever defeating it. Pure: pass `now` explicitly.
+ * Pick the newest settled, non-prerelease build from the registry's `versions[]`. The registry can
+ * label rolling `-alpha` builds `beta: false`, so the suffix must be checked too. If no stable build
+ * qualifies, use `currentVersion` only when it is also stable; otherwise return null so the caller
+ * uses WhatsApp's first-party page instead of pinning an alpha build. Pure: pass `now` explicitly.
  */
 export function pickSettledWebVersion(versions: unknown, now: number, currentVersion: string | null): string | null {
-  if (!Array.isArray(versions)) return currentVersion;
+  const stableCurrentVersion = currentVersion && !isPrereleaseWebVersion(currentVersion) ? currentVersion : null;
+  if (!Array.isArray(versions)) return stableCurrentVersion;
   const settledCutoff = now - WEB_VERSION_SETTLE_MS;
   let best: { version: string; released: number } | null = null;
   for (const raw of versions) {
     if (!raw || typeof raw !== 'object') continue;
     const e = raw as WaVersionEntry;
     if (typeof e.version !== 'string' || !/^\d/.test(e.version)) continue;
-    if (e.beta === true) continue;
+    if (e.beta === true || isPrereleaseWebVersion(e.version)) continue;
     const released = typeof e.released === 'string' ? Date.parse(e.released) : NaN;
     if (!Number.isFinite(released) || released > settledCutoff) continue; // too fresh
     const expire = typeof e.expire === 'string' ? Date.parse(e.expire) : NaN;
     if (Number.isFinite(expire) && expire <= now) continue; // already expired
     if (!best || best.released < released) best = { version: e.version, released };
   }
-  return best?.version ?? currentVersion;
+  return best?.version ?? stableCurrentVersion;
 }
 
 /**
@@ -167,8 +169,8 @@ export function pickSettledWebVersion(versions: unknown, now: number, currentVer
  * is cached for CACHE_TTL_MS, then refreshed; a failure is NOT cached, so a later call retries (a
  * single transient outage must not permanently defeat the #488 fix). A failed refresh keeps the
  * previous build, and only a process that never resolved one gets null. Concurrent callers share one
- * in-flight fetch. Prefers a build that has settled (see `pickSettledWebVersion`) over the registry's
- * possibly-minute-old `currentVersion`.
+ * in-flight fetch. Prefers a settled build over the registry's possibly-minute-old `currentVersion`;
+ * if it only advertises prereleases, returns null so the adapter uses WhatsApp's first-party page.
  */
 export async function resolveCurrentWebVersion(fetcher: typeof fetch = fetch): Promise<string | null> {
   const previous = cachedCurrentVersion ?? null;
