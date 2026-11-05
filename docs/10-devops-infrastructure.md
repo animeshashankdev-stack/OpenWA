@@ -323,6 +323,12 @@ a session-level advisory lock. OpenWA runs its existing data migrations at start
 tables in Supabase. The Supabase anon key, service-role key, and management PAT are not database
 credentials and are not needed by the running service; do not add them to Render.
 
+The Blueprint sets `DATABASE_SSL_REJECT_UNAUTHORIZED=false` because this project's Render-to-Supabase
+pooler handshake reports `self-signed certificate in certificate chain`. TLS remains enabled and
+encrypts traffic, but the client does not authenticate the server certificate. If Supabase provides a
+CA certificate for this pooler, prefer installing/trusting that CA and restoring certificate
+verification instead of keeping this override.
+
 Supabase holds the `DATABASE_TYPE=postgres` data store (sessions, messages, webhooks, and related
 tables). OpenWA's auth keys and audit log remain in `main.sqlite` on `/app/data`, alongside WhatsApp
 authentication, local media, and plugin state. The Render disk is therefore required even when the
