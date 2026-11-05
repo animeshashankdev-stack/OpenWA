@@ -4,6 +4,7 @@ services:
     runtime: docker
     plan: starter
     region: singapore
+    autoDeploy: true
     numInstances: 1
     dockerfilePath: ./Dockerfile
     dockerContext: .
