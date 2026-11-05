@@ -43,13 +43,37 @@
 .sidebar-logo {
   width: 28px;
   height: 28px;
-  object-fit: contain;
-  flex-shrink: 0;
 }
 
 .mobile-brand .sidebar-logo {
   width: 24px;
   height: 24px;
+}
+
+.zxkai-logo {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  overflow: hidden;
+  flex-shrink: 0;
+  border: 1px solid #991b1b;
+  border-radius: 50%;
+  background: #171112;
+  color: #fff;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.zxkai-logo img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.zxkai-logo-fallback {
+  color: #f87171;
 }
 
 .sidebar-brand {

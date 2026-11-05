@@ -26,6 +26,7 @@ import {
   UserCheck,
 } from 'lucide-react';
 import { useTheme } from '../hooks/useTheme';
+import { ZxkaiLogo } from './ZxkaiLogo';
 import { useRole, type UserRole } from '../hooks/useRole';
 import { languageOptions, resolveSupportedLanguage, rtlLanguages, type SupportedLanguage } from '../i18n';
 import { healthApi, infraApi } from '../services/api';
@@ -222,7 +223,7 @@ export function Layout({ onLogout, userRole }: LayoutProps) {
             {isMobileOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
           <div className="mobile-brand">
-            <img src="/openwa_logo.webp" alt="OpenWA" className="sidebar-logo" />
+            <ZxkaiLogo className="sidebar-logo" />
             <span className="brand-name">{t('common.appName')}</span>
           </div>
           <div style={{ width: 40 }} />
@@ -237,7 +238,7 @@ export function Layout({ onLogout, userRole }: LayoutProps) {
         inert={isMobile && !isMobileOpen}
       >
         <div className="sidebar-header">
-          <img src="/openwa_logo.webp" alt="OpenWA" className="sidebar-logo" />
+          <ZxkaiLogo className="sidebar-logo" />
           {!collapsed && (
             <div className="sidebar-brand">
               <span className="brand-name">{t('common.appName')}</span>

@@ -137,13 +137,13 @@ select {
 }
 
 select:hover {
-  border-color: var(--primary, #25d366);
+  border-color: var(--primary, #dc2626);
 }
 
 select:focus {
   outline: none;
   border-color: var(--focus-ring);
-  box-shadow: 0 0 0 3px rgba(37, 211, 102, 0.1);
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
 }
 
 select:disabled {
@@ -259,7 +259,7 @@ select:disabled {
   outline: none;
   border-color: var(--focus-ring);
   background: var(--bg-white, #fff);
-  box-shadow: 0 0 0 3px rgba(37, 211, 102, 0.1);
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
 }
 
 /* The rule above is meant for TEXT inputs. Radios/checkboxes would otherwise stretch to width:100%
@@ -361,7 +361,7 @@ input[type='radio']:not(.toggle-switch input):focus-visible {
   align-items: center;
   gap: 0.5rem;
   padding: 0.75rem 1.25rem;
-  background: var(--primary, #25d366);
+  background: var(--primary, #dc2626);
   /* Dark text on the WhatsApp green: 9.0:1 (AAA). White was 1.98:1, failing even the AA
      large-text floor - the single worst contrast pair in the dashboard. */
   color: #0f172a;
@@ -374,7 +374,7 @@ input[type='radio']:not(.toggle-switch input):focus-visible {
 }
 
 .btn-primary:hover:not(:disabled) {
-  background: var(--primary-hover, #1da851);
+  background: var(--primary-hover, #b91c1c);
 }
 
 .btn-primary:disabled {

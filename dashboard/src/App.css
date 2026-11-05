@@ -1,18 +1,9 @@
 :root {
-  --primary: #25d366;
-  /* The brand green as FOREGROUND is 1.98:1 on white, far under the 4.5:1 AA needs for text.
-     It stays the fill colour; anything rendering it as text or an icon uses --primary-text, the same
-     hue darkened until it clears 4.5:1 on the light backgrounds it lands on: 5.28:1 on white, 5.04:1 on
-     --bg-light, and 4.82:1 on --primary-soft (4.63:1 over --bg-light), the tint the active sidebar item
-     uses. On the heaviest green tint a badge paints (18 percent over white) it measures 4.61:1. */
-  --primary-text: #167c3b;
-  /* The keyboard focus ring. WCAG 2.2 SC 1.4.11 asks 3:1 of a focus indicator; the brand fill measures 1.98:1 on white
-     and 1.74:1 on --primary-soft over --bg-light. --primary-text clears it on every surface a ring is drawn on: 5.28:1
-     on white, 5.04:1 on --bg-light and 4.63:1 on --primary-soft over --bg-light. In the dark theme it is the brand
-     green itself, 7.38:1 on --bg-white and 5.15:1 on --primary-soft over it. */
+    --primary: #dc2626;
+    --primary-text: #b91c1c;
   --focus-ring: var(--primary-text);
-  --primary-hover: #1da851;
-  --primary-soft: rgba(37, 211, 102, 0.12);
+    --primary-hover: #b91c1c;
+    --primary-soft: rgba(220, 38, 38, 0.12);
   --bg-light: #f8fafc;
   --bg-white: #ffffff;
   --bg-card: #ffffff;
@@ -63,8 +54,7 @@
   --warning-text: var(--warning);
 
   --primary-soft: color-mix(in srgb, var(--primary) 18%, transparent);
-  /* On Slate 800 the brand green already measures 7.38:1, so dark keeps it for text too. */
-  --primary-text: var(--primary);
+  --primary-text: #f87171;
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
   --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.3), 0 2px 4px -2px rgb(0 0 0 / 0.3);
   --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.4), 0 4px 6px -4px rgb(0 0 0 / 0.4);
@@ -99,9 +89,7 @@
     --success-text: var(--success);
     --warning-text: var(--warning);
     --primary-soft: color-mix(in srgb, var(--primary) 18%, transparent);
-    /* Must be restated here, not inherited: the light value (#167c3b) measures 2.77:1 on Slate 800
-       and would fail worse than the brand green it replaced. On dark the brand green is 7.38:1. */
-    --primary-text: var(--primary);
+     --primary-text: #f87171;
     --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
     --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.3), 0 2px 4px -2px rgb(0 0 0 / 0.3);
     --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.4), 0 4px 6px -4px rgb(0 0 0 / 0.4);

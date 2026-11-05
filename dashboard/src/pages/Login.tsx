@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Eye, EyeOff, Languages } from 'lucide-react';
-import { GithubIcon } from '../components/GithubIcon';
 import { CustomSelect } from '../components/CustomSelect';
+import { ZxkaiLogo } from '../components/ZxkaiLogo';
 import { languageOptions, resolveSupportedLanguage, type SupportedLanguage } from '../i18n';
 import { API_BASE_URL } from '../services/api';
 import './Login.css';
@@ -79,7 +79,8 @@ export function Login({ onLogin }: LoginProps) {
     <div className="login-container">
       <div className="login-card">
         <div className="login-logo">
-          <img src="/openwa_logo.webp" alt="OpenWA" className="logo-icon" />
+          <ZxkaiLogo className="logo-icon" />
+          <span className="brand-name">{t('common.appName')}</span>
           <span className="version-info">
             {t('login.version', {
               version: __APP_VERSION__,
@@ -135,25 +136,11 @@ export function Login({ onLogin }: LoginProps) {
           </button>
         </form>
 
-        <p className="login-help">
-          {t('login.help')}{' '}
-          <a href="https://docs.open-wa.org" target="_blank" rel="noopener noreferrer">
-            {t('login.viewDocs')}
-          </a>
-        </p>
+        <p className="login-help">{t('login.help')}</p>
       </div>
 
       <footer className="login-footer">
         <span>{t('login.footer')}</span>
-        <a
-          href="https://github.com/rmyndharis/OpenWA"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="github-link"
-          aria-label="GitHub"
-        >
-          <GithubIcon size={18} />
-        </a>
       </footer>
     </div>
   );

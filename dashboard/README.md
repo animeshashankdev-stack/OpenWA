@@ -1,10 +1,6 @@
-# OpenWA Dashboard
+# Zxkai Dashboard
 
-<p align="center">
-  <img src="../docs/logo/openwa_logo.webp" alt="OpenWA Logo" width="120"/>
-</p>
-
-Modern web dashboard for managing OpenWA WhatsApp API Gateway sessions, webhooks, and infrastructure.
+Modern web dashboard for managing WhatsApp sessions, webhooks, and infrastructure.
 
 ## ✨ Features
 
@@ -75,7 +71,7 @@ dashboard/
 │   ├── App.tsx         # Root component
 │   ├── App.css         # Global styles
 │   └── main.tsx        # Entry point
-├── public/             # Static assets
+├── public/             # Static assets, including zxkai-logo.png when supplied
 ├── index.html          # HTML template
 └── vite.config.ts      # Vite configuration
 ```
@@ -96,4 +92,4 @@ VITE_WS_URL=http://localhost:2785
 
 ## 📄 License
 
-MIT License - Part of the [OpenWA](https://github.com/rmyndharis/OpenWA) project.
+MIT License - Derived from [OpenWA](https://github.com/rmyndharis/OpenWA).

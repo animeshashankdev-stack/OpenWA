@@ -457,8 +457,7 @@ test('the focus ring clears 3:1 on every surface it is drawn on, in both themes'
   }
 });
 
-// The enabled badge of a plugin instance paints --primary-soft, so its text is the brand green twin: --success-text is
-// a different green, and on the 18 percent tint of the dark theme it measured 4.48:1.
+// The enabled badge of a plugin instance paints --primary-soft, so its text uses the contrast-safe brand tint.
 test('the enabled badge of a plugin instance clears 4.5:1 on its tint in every theme', () => {
   const css = readFileSync(join(dirname(fileURLToPath(import.meta.url)), 'components/PluginInstances.css'), 'utf8');
   const rule =
@@ -488,7 +487,7 @@ test('the search match and the Number Checker highlight pill clear AA in both th
     );
   assert.ok(mark, 'GlobalSearch.css no longer styles the match with a hex colour on a token fill');
   const pill =
-    /\.nc-format-pill\.highlight\s*\{[^}]*background:\s*rgba\(37,\s*211,\s*102,\s*([\d.]+)\)[^}]*?color:\s*var\((--[\w-]+)\)/.exec(
+    /\.nc-format-pill\.highlight\s*\{[^}]*background:\s*rgba\(220,\s*38,\s*38,\s*([\d.]+)\)[^}]*?color:\s*var\((--[\w-]+)\)/.exec(
       read('NumberChecker.css'),
     );
   assert.ok(pill, 'NumberChecker.css no longer styles the highlight pill with a token colour');
@@ -499,7 +498,7 @@ test('the search match and the Number Checker highlight pill clear AA in both th
     assert.ok(onAmber >= 4.5, `${anchor} match text on the amber is ${onAmber.toFixed(2)}:1`);
     const tint = mix(rgb(hexOf(blockAfter(LIGHT), '--primary')), Number(pill[1]), rgb(hexOf(block, '--bg-white')));
     const onTint = contrast(rgb(hexOf(block, pill[2])), tint);
-    assert.ok(onTint >= 4.5, `${anchor} pill text on the green tint is ${onTint.toFixed(2)}:1`);
+    assert.ok(onTint >= 4.5, `${anchor} pill text on the red tint is ${onTint.toFixed(2)}:1`);
   }
 });
 

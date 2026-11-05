@@ -13,6 +13,7 @@ const NON_LATIN = ['ar', 'he', 'hi', 'ko', 'te', 'zh-CN', 'zh-HK'];
 // The same text in every language.
 const SAME_EVERYWHERE = new Set([
   'common.appName',
+  'login.footer',
   'common.url',
   'nav.webhooks',
   'webhooks.title',

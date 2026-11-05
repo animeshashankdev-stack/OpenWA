@@ -110,15 +110,15 @@
   padding: 0.0625rem 0.4375rem;
   font-size: 0.6875rem;
   font-weight: 600;
-  color: var(--primary-text, #167c3b);
-  background: color-mix(in srgb, var(--primary, #25d366) 12%, transparent);
-  border: 1px solid color-mix(in srgb, var(--primary, #25d366) 35%, transparent);
+  color: var(--primary-text, #b91c1c);
+  background: color-mix(in srgb, var(--primary, #dc2626) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--primary, #dc2626) 35%, transparent);
   border-radius: 999px;
   cursor: pointer;
 }
 
 .plugins-page .plugin-update-chip:hover {
-  background: color-mix(in srgb, var(--primary, #25d366) 20%, transparent);
+  background: color-mix(in srgb, var(--primary, #dc2626) 20%, transparent);
 }
 
 /* Pending-update counter on the Install button, so updates are visible without opening it. */
@@ -135,7 +135,7 @@
   /* On the brand green Install button in both themes: dark text, as on .btn-primary. The brand-coloured text
      this had was 2.49:1 on it in light and the same colour as the button in dark (invisible). */
   color: #0f172a;
-  background: color-mix(in srgb, var(--primary, #25d366) 18%, transparent);
+  background: color-mix(in srgb, var(--primary, #dc2626) 18%, transparent);
   border-radius: 999px;
 }
 
@@ -265,8 +265,8 @@
 /* Positive action (Enable / Activate): the one solid brand-green CTA, so an action never reads
    the same as the passive "Active" state below. */
 .plugins-page .btn-toggle.enable {
-  background: var(--primary, #25d366);
-  border: 1px solid var(--primary, #25d366);
+  background: var(--primary, #dc2626);
+  border: 1px solid var(--primary, #dc2626);
   color: #0f172a;
 }
 
@@ -377,7 +377,7 @@
   outline: none;
   border-color: var(--focus-ring);
   background-color: var(--bg-white);
-  box-shadow: 0 0 0 3px rgba(37, 211, 102, 0.1);
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
 }
 
 /* Nested object — a bordered group of sub-fields. */
@@ -804,13 +804,13 @@
 }
 
 .plugins-page .install-drop:hover {
-  border-color: var(--primary, #25d366);
+  border-color: var(--primary, #dc2626);
   color: var(--text-secondary);
 }
 
 .plugins-page .install-drop.has-file {
   border-style: solid;
-  border-color: var(--primary, #25d366);
+  border-color: var(--primary, #dc2626);
   color: var(--text-primary);
   background: rgba(34, 197, 94, 0.05);
 }
@@ -1162,7 +1162,7 @@
 }
 
 .plugins-page .catalog-badge.update {
-  color: var(--primary-text, #167c3b);
+  color: var(--primary-text, #b91c1c);
 }
 
 .plugins-page .catalog-row-action {

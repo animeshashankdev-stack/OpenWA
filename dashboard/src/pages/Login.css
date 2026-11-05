@@ -41,7 +41,14 @@
 .login-container .logo-icon {
   width: 127px;
   height: 127px;
-  object-fit: contain;
+  font-size: 4rem;
+  box-shadow: var(--shadow-md);
+}
+
+.login-container .brand-name {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--text-primary);
 }
 
 .login-container .version-info {
@@ -74,7 +81,7 @@
 
 .login-container .login-language:focus-within {
   border-color: var(--focus-ring);
-  box-shadow: 0 0 0 3px rgba(37, 211, 102, 0.1);
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.12);
 }
 
 .login-container .login-form {
@@ -113,7 +120,7 @@
 .login-container .input-wrapper input:focus {
   outline: none;
   border-color: var(--focus-ring);
-  box-shadow: 0 0 0 3px rgba(37, 211, 102, 0.1);
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.12);
 }
 
 .login-container .input-wrapper input.error {
