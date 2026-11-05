@@ -1,0 +1,43 @@
+services:
+  - type: web
+    name: openwa
+    runtime: docker
+    plan: starter
+    region: singapore
+    numInstances: 1
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /api/health/ready
+    disk:
+      name: openwa-data
+      mountPath: /app/data
+      sizeGB: 2
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_TYPE
+        value: postgres
+      - key: DATABASE_HOST
+        value: aws-0-ap-southeast-1.pooler.supabase.com
+      - key: DATABASE_PORT
+        value: "5432"
+      - key: DATABASE_NAME
+        value: postgres
+      - key: DATABASE_USERNAME
+        value: postgres.mpzrctaafcltfrpdzgqn
+      - key: DATABASE_PASSWORD
+        sync: false
+      - key: DATABASE_SSL
+        value: "true"
+      - key: DATABASE_SYNCHRONIZE
+        value: "false"
+      - key: DATABASE_POOL_SIZE
+        value: "5"
+      - key: POSTGRES_BUILTIN
+        value: "false"
+      - key: AUTO_START_SESSIONS
+        value: "true"
+      - key: WWEBJS_WEB_VERSION
+        value: "off"
+      - key: API_MASTER_KEY
+        sync: false

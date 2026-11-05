@@ -308,6 +308,27 @@ flowchart TB
     Internet --> NGINX
 ```
 
+### Render with Supabase
+
+`render.yaml` defines one Docker web service in Singapore, with the readiness probe and a persistent
+`/app/data` disk. Deploy it on an always-on paid instance; Render's free web services sleep and do not
+support persistent disks. Keep the instance count at one: WhatsApp engine state is process-local, and
+the main auth/audit database and linked-session files are stored on the disk.
+
+Before the first deploy, set `DATABASE_PASSWORD` to the Supabase database password and `API_MASTER_KEY`
+to a strong, unique secret in Render. The database host uses Supabase's session pooler on port 5432;
+do not use the transaction pooler (port 6543), because OpenWA serializes its Postgres migrations with
+a session-level advisory lock. OpenWA runs its existing data migrations at startup and creates its
+tables in Supabase. The Supabase anon key, service-role key, and management PAT are not database
+credentials and are not needed by the running service; do not add them to Render.
+
+Supabase holds the `DATABASE_TYPE=postgres` data store (sessions, messages, webhooks, and related
+tables). OpenWA's auth keys and audit log remain in `main.sqlite` on `/app/data`, alongside WhatsApp
+authentication, local media, and plugin state. The Render disk is therefore required even when the
+data store is Supabase. `AUTO_START_SESSIONS=true` restores authenticated sessions after a service
+restart. Set the Supabase password in the local `.env` as `DATABASE_PASSWORD` before testing locally;
+never commit or paste it into chat.
+
 ### Multi-Server Deployment
 
 > **Design sketch, not a supported topology.** OpenWA is single-process with in-memory engine state,
